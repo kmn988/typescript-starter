@@ -1,0 +1,14 @@
+version: '1'
+services:
+  nest-db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: nest
+      POSTGRES_PASSWORD: nest
+      POSTGRES_DB: nest
+    ports:
+      - 5432:5432
+    networks:
+      - nest-network
+networks:
+  nest-network:
