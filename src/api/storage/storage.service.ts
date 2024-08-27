@@ -7,7 +7,6 @@ export class StorageService {
 
   async uploadPoster(bucket, name, buffer) {
     const bucketExist = await this.minioClient.getMinio().bucketExists(bucket);
-    console.log(bucketExist);
 
     if (!bucketExist) {
       await this.minioClient.getMinio().makeBucket(bucket);
@@ -17,7 +16,6 @@ export class StorageService {
 
   public async getPoster(bucket, name, res) {
     const data = await this.minioClient.getMinio().getObject(bucket, name);
-
     return data.pipe(res);
   }
 }

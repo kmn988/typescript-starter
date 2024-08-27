@@ -2,6 +2,7 @@ import { Crud, Override } from '@dataui/crud';
 import {
   Body,
   Controller,
+  Param,
   Post,
   UploadedFile,
   UseInterceptors,
@@ -21,21 +22,53 @@ import { FilmsService } from './films.service';
   dto: {
     create: CreateFilmDto,
   },
+  params: {
+    id: {
+      field: 'id',
+      type: 'uuid',
+      primary: true,
+    },
+  },
+  query: {
+    join: {
+      categories: {
+        eager: true,
+        allow: ['id', 'name'],
+      },
+    },
+  },
 })
 export class FilmsController {
   constructor(public service: FilmsService) {}
   @Override('createOneBase')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('poster'))
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     type: CreateFilmDto,
   })
   createFilm(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() poster: Express.Multer.File,
     @Body() dto: CreateFilmDto,
   ) {
-    console.log(file);
-    console.log(dto);
-    return this.service.createOneFilm(dto, file);
+    return this.service.createOneFilm(dto, poster);
   }
+
+  @Override('updateOneBase')
+  @UseInterceptors(FileInterceptor('poster'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    type: CreateFilmDto,
+  })
+  updateFilm(
+    @UploadedFile() poster: Express.Multer.File,
+    @Body() dto: CreateFilmDto,
+    @Param('id') id,
+  ) {
+    return this.service.updateOneFilm(id, dto, poster);
+  }
+
+  // @Override('getOneBase')
+  // getFilm(@Param('id') id) {
+  //   return this.service.getOneFilm(id);
+  // }
 }
